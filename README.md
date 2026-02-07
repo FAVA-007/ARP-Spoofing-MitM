@@ -16,12 +16,79 @@ Este repositorio contiene un script educativo diseñado para interceptar el trá
 - Uso de tablas ARP estáticas en dispositivos críticos
 - Configuración de DHCP Snooping para validar la relación IP-MAC
 
-Uso
-1. Habilitar IP forwarding en el atacante
-2. Ejecutar con permisos de root: `sudo python3 script.py --iface eth0 --victim-ip 192.168.1.10 --gateway-ip 192.168.1.1`
+# Man-in-the-Middle (MitM) mediante ARP Spoofing
 
-Evidencias
-Coloca las capturas de resultado (por ejemplo, `show_ip_arp.png`) en la carpeta `images/` de este repositorio.
+> **Proyecto educativo** — Envenenamiento ARP para prácticas de Capa 2
 
-Responsable y Legal
-Solo para entornos de laboratorio con autorización. No usar en redes de terceros sin permiso.
+## 📖 Descripción
+
+Script educativo en **Python** que realiza ARP spoofing para posicionar al atacante entre una víctima y su gateway. Incluye mecánicas de restauración de ARP y opciones de simulación (`--dry-run`).
+
+⚠️ **AVISO:** Solo ejecutar en laboratorios autorizados.
+
+---
+
+## 📋 Requisitos
+
+| Requisito | Detalle |
+|-----------|--------:|
+| IP Forwarding | Debe estar habilitado en el atacante (`echo 1 > /proc/sys/net/ipv4/ip_forward`) |
+| Librerías | `scapy`, `time`, `os` |
+| Privilegios | Root (o `--dry-run`) |
+
+---
+
+## ⚙️ Funcionamiento
+
+- **Suplantación:** Envía ARP replies falsas a víctima y gateway
+- **Interceptación:** El tráfico pasa por el atacante
+- **Restauración:** Repara las tablas ARP al finalizar
+
+---
+
+## 🚀 Uso
+
+```bash
+# Habilitar IP forwarding (Linux)
+sudo sh -c 'echo 1 > /proc/sys/net/ipv4/ip_forward'
+
+# Ejecutar (ejemplo)
+sudo python3 script.py --iface eth0 --victim-ip 192.168.1.10 --gateway-ip 192.168.1.1
+
+# Simulación sin enviar paquetes
+sudo python3 script.py --dry-run --iface eth0 --victim-ip 192.168.1.10 --gateway-ip 192.168.1.1
+```
+
+### Opciones principales
+
+```
+--iface IFACE        Interfaz de red (default: eth0)
+--victim-ip IP       IP de la víctima (obligatorio)
+--gateway-ip IP      IP del gateway (obligatorio)
+--dry-run            No enviar paquetes; solo simular
+```
+
+---
+
+## 🛡️ Medidas de Mitigación
+
+- Implementar **Dynamic ARP Inspection (DAI)**
+- Usar **ARP estático** en equipos críticos
+- Configurar **DHCP Snooping**
+
+---
+
+## 📸 Evidencias
+
+Coloca capturas en `images/`:
+
+```
+images/
+└── show_ip_arp.png
+```
+
+---
+
+## ⚖️ Legal
+
+Usar solo en entornos de laboratorio con permiso explícito.
